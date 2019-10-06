@@ -5,6 +5,7 @@ class Parser:
     INTERFACE   = 'interface'
     DESCRIPTION = 'description'
     IP_ADDR     = 'ip address'
+    VL          = 'VL'
 
     @classmethod
     def fromFile(self, fileName):
@@ -49,8 +50,13 @@ class Parser:
                 data[self.INTERFACE] = attribute.replace(self.INTERFACE, '').strip()
 
             elif self.DESCRIPTION in attribute:
-                data[self.DESCRIPTION] = attribute.replace(self.DESCRIPTION, '').strip()
-            
+                descStr                = attribute.split('VL')
+                description            = descStr[0]
+                data[self.DESCRIPTION] = description.replace(self.DESCRIPTION, '').strip()
+                
+                if self.VL in attribute:
+                    data['vlan'] = self.VL + descStr[1].strip()
+                    
             elif self.IP_ADDR in attribute:
                 ip, netMask = re.findall( r'[0-9]+(?:\.[0-9]+){3}', attribute.replace(self.IP_ADDR, '').strip() )
                 data['ip_address'] = ip
